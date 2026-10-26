@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Receipt Tracker{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap row">
+    <a class="brand" href="/">🧾 Receipt Tracker</a>
+    <nav>
+      {% if user %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/receipts">Receipts</a>
+        <a class="btn small" href="/receipts/new">+ Add</a>
+        {% if user.plan != 'pro' %}<a href="/upgrade">Upgrade</a>{% endif %}
+        <a href="/account">Account</a>
+        <form method="post" action="/logout" class="inline">
+          <input type="hidden" name="csrf" value="{{ csrf }}">
+          <button class="link">Log out</button>
+        </form>
+      {% else %}
+        <a href="/privacy">Privacy</a>
+        <a href="/login">Log in</a>
+        <a class="btn small" href="/signup">Sign up</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  {% for kind, msg in flashes %}<div class="flash {{ kind }}">{{ msg }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="wrap footer">
+  <p class="disclaimer"><strong>Not tax advice.</strong> {{ disclaimer }}</p>
+  <p><a href="/privacy">Privacy</a> · Receipt Tracker MVP</p>
+</footer>
+</body>
+</html>

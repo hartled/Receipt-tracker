@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sign up' if mode == 'signup' else 'Log in' }} · Receipt Tracker{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>{{ 'Create your account' if mode == 'signup' else 'Log in' }}</h1>
+  {% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+  <form method="post" action="/{{ mode }}">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label>Email <input type="email" name="email" required value="{{ email or '' }}" autocomplete="email"></label>
+    <label>Password <input type="password" name="password" required minlength="{{ 8 if mode == 'signup' else 1 }}"
+      autocomplete="{{ 'new-password' if mode == 'signup' else 'current-password' }}"></label>
+    <button class="btn full">{{ 'Sign up' if mode == 'signup' else 'Log in' }}</button>
+  </form>
+  <p class="muted">
+    {% if mode == 'signup' %}Already have an account? <a href="/login">Log in</a>. By signing up you accept our <a href="/privacy">privacy notice</a>.
+    {% else %}<a href="/forgot-password">Forgot your password?</a> · New here? <a href="/signup">Create an account</a>.{% endif %}
+  </p>
+</div>
+{% endblock %}

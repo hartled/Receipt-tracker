@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Choose a new password · Receipt Tracker{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Choose a new password</h1>
+  {% if invalid %}
+  <div class="flash error">This reset link is invalid, expired, or has already been used.</div>
+  <p><a class="btn" href="/forgot-password">Request a new link</a></p>
+  {% else %}
+  {% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+  <form method="post" action="/reset-password">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <input type="hidden" name="token" value="{{ token }}">
+    <label>New password <input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
+    <label>Confirm new password <input type="password" name="confirm" required minlength="8" autocomplete="new-password"></label>
+    <button class="btn full">Set new password</button>
+  </form>
+  <p class="muted small">Resetting signs you out everywhere.</p>
+  {% endif %}
+</div>
+{% endblock %}

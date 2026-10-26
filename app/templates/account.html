@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Account · Receipt Tracker{% endblock %}
+{% block content %}
+<h1>Account</h1>
+<div class="card">
+  <p>Signed in as <strong>{{ user.email }}</strong> · {{ count }} receipt(s) stored.</p>
+  <p>Plan: <strong>{{ usage.plan_label }}</strong>{% if not usage.unlimited %} · {{ usage.used }} of {{ usage.limit }} receipts used this month · <a href="/upgrade">Upgrade</a>{% endif %}</p>
+  <p class="muted small">Email forwarding (coming soon): your private address will be <code>{{ inbound_address }}</code>.
+    Not active yet — no email service is connected.</p>
+</div>
+<div class="card">
+  <h2>Export</h2>
+  <p><a class="btn small ghost" href="/export.csv">All receipts (CSV)</a> <a class="btn small ghost" href="/export.pdf">All years (PDF)</a></p>
+</div>
+<div class="card danger-zone">
+  <h2>Delete my data</h2>
+  <p>Permanently delete all receipts and uploaded files. Your login stays.</p>
+  <form method="post" action="/account/delete-data" onsubmit="return confirm('Permanently delete ALL receipts and files?')">
+    <input type="hidden" name="csrf" value="{{ csrf }}"><button class="btn danger">Delete all receipts</button></form>
+  <h2>Delete my account</h2>
+  <p>Deletes your account, receipts and files. This cannot be undone.</p>
+  <form method="post" action="/account/delete" onsubmit="return confirm('Delete your account permanently?')">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label>Confirm password <input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn danger">Delete account</button></form>
+</div>
+{% endblock %}

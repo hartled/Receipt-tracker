@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit receipt · Receipt Tracker{% endblock %}
+{% block content %}
+<h1>Review receipt</h1>
+<div class="split">
+  <div class="card preview">
+    {% if r.stored_name and r.content_type.startswith('image/') %}
+      <img src="/receipts/{{ r.id }}/file" alt="Receipt image">
+    {% elif r.stored_name %}
+      <p><a href="/receipts/{{ r.id }}/file" target="_blank" rel="noopener">Open PDF ({{ r.original_name }})</a></p>
+    {% else %}<p class="muted">No file attached (manual entry).</p>{% endif %}
+    <p class="muted small">Extracted by: {{ r.extraction_source }}</p>
+    {% if r.raw_text %}<details><summary>Extracted text</summary><pre>{{ r.raw_text[:3000] }}</pre></details>{% endif %}
+  </div>
+  <form class="card" method="post" action="/receipts/{{ r.id }}/edit">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label>Vendor <input name="vendor" value="{{ r.vendor }}" maxlength="255"></label>
+    <div class="row gap">
+      <label>Date <input type="date" name="date" value="{{ r.date or '' }}"></label>
+      <label>Amount (USD) <input name="amount" inputmode="decimal" value="{{ '%.2f'|format(r.amount) }}" pattern="[0-9,]*\.?[0-9]{0,2}"></label>
+    </div>
+    <label>Category
+      <select name="category">
+        {% for c in categories %}<option value="{{ c.key }}" {% if c.key == r.category %}selected{% endif %}>{{ c.label }} ({{ c.schedule_c_line }}, {{ c.deductible_pct }}%)</option>{% endfor %}
+      </select>
+    </label>
+    {% set c = cat(r.category) %}{% if c.note %}<p class="hint">💡 {{ c.note }}</p>{% endif %}
+    <label>Notes / business purpose <textarea name="notes" rows="3" maxlength="2000">{{ r.notes }}</textarea></label>
+    <button class="btn full">Save</button>
+    <p class="muted small">Category is a suggestion only — general guidance, not tax advice.</p>
+  </form>
+</div>
+{% endblock %}

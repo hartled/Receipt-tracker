@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Receipt Tracker{% endblock %}
+{% block content %}
+<div class="row between">
+  <h1>Tax year {{ year }}</h1>
+  <form method="get" class="inline">
+    <select name="year" onchange="this.form.submit()" aria-label="Year">
+      {% for y in years %}<option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>{% endfor %}
+    </select>
+  </form>
+</div>
+<div class="grid3 stats">
+  <div class="card stat"><span>Total expenses</span><strong>{{ summary.total|money }}</strong></div>
+  <div class="card stat"><span>Est. deductible*</span><strong>{{ summary.deductible|money }}</strong></div>
+  <div class="card stat"><span>Receipts</span><strong>{{ summary.count }}</strong>
+    {% if summary.needs_review %}<small class="warn">{{ summary.needs_review }} need review</small>{% endif %}</div>
+</div>
+<div class="card usage">
+  {% if usage.unlimited %}<strong>Pro plan</strong> · {{ usage.used }} receipt(s) added in {{ usage.month_label }} · unlimited
+  {% else %}
+  <div class="row between"><span><strong>Free plan</strong> · {{ usage.used }} of {{ usage.limit }} receipts used in {{ usage.month_label }}</span>
+    <a href="/upgrade">Upgrade</a></div>
+  <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="{{ usage.limit }}" aria-valuenow="{{ usage.used }}">
+    <span style="width: {{ [100, (usage.used * 100 // (usage.limit or 1))]|min }}%"></span></div>
+  {% if usage.at_limit %}<p class="warn small">You've reached this month's free limit. It resets on {{ usage.resets_on.strftime('%B') }} 1.</p>{% endif %}
+  {% endif %}
+</div>
+{% if undated %}<div class="flash info">{{ undated }} receipt(s) have no date and aren't counted in any year. <a href="/receipts">Fix them</a>.</div>{% endif %}
+<div class="card">
+  <div class="row between"><h2>By category</h2>
+    <div><a class="btn small ghost" href="/export.csv?year={{ year }}">Export CSV</a>
+         <a class="btn small" href="/export.pdf?year={{ year }}">Tax summary PDF</a></div></div>
+  {% if summary.rows %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Category</th><th>Sched. C</th><th class="num">#</th><th class="num">Total</th><th class="num">Ded. %</th><th class="num">Est. deductible</th></tr></thead>
+    <tbody>
+    {% for row in summary.rows %}
+      <tr><td><a href="/receipts?year={{ year }}&category={{ row.category.key }}">{{ row.category.label }}</a></td>
+        <td>{{ row.category.schedule_c_line }}</td><td class="num">{{ row.count }}</td>
+        <td class="num">{{ row.total|money }}</td><td class="num">{{ row.category.deductible_pct }}%</td>
+        <td class="num">{{ row.deductible|money }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="muted small">* Estimate using simplified defaults (e.g. meals 50%). General guidance only, not tax advice.</p>
+  {% else %}
+  <p>No receipts for {{ year }} yet. <a href="/receipts/new">Add your first receipt</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}

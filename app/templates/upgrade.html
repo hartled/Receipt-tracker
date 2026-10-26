@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Upgrade to Pro · Receipt Tracker{% endblock %}
+{% block content %}
+<h1>Plans</h1>
+<div class="flash info"><strong>Billing isn't available yet.</strong> Pro can't be purchased right now, and this page
+  doesn't collect any payment details. Everyone is on the Free plan for now.</div>
+{% if usage %}
+<p>You're on the <strong>{{ usage.plan_label }}</strong> plan.
+  {% if usage.unlimited %}Unlimited receipts.{% else %}{{ usage.used }} of {{ usage.limit }} free receipts used in {{ usage.month_label }}.{% endif %}</p>
+{% endif %}
+<div class="split">
+  <div class="card">
+    <h2>Free</h2>
+    <p class="price"><strong>$0</strong></p>
+    <ul>
+      <li>{{ free_limit }} new receipts per calendar month</li>
+      <li>Local OCR extraction and manual editing</li>
+      <li>Schedule C-style categories and dashboard</li>
+      <li>CSV and PDF tax-summary exports</li>
+    </ul>
+  </div>
+  <div class="card plan-pro">
+    <h2>Pro</h2>
+    <p class="price"><strong>${{ monthly }}</strong>/month or <strong>${{ yearly }}</strong>/year</p>
+    <ul>
+      <li><strong>Unlimited</strong> receipts</li>
+      <li>Everything in Free, including CSV and PDF exports</li>
+    </ul>
+    <button class="btn full" disabled aria-disabled="true">Coming soon, billing not available yet</button>
+  </div>
+</div>
+<p class="muted small">The monthly limit counts receipts added (uploaded, entered manually or forwarded) during the
+  calendar month (UTC). Deleting a receipt doesn't free up a slot. Your existing receipts and exports stay available
+  if you hit the limit.</p>
+{% endblock %}

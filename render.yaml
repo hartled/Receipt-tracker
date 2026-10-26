@@ -1,0 +1,45 @@
+# Render Blueprint for Receipt Tracker.
+#
+# Defaults to the FREE plan. IMPORTANT: on the free plan the filesystem is ephemeral, so the SQLite DB and
+# uploaded receipts under DATA_DIR (/var/data) are WIPED on every redeploy/restart/spin-down. Use free only
+# for demos with fake data.
+#
+# For persistent data, Render needs a paid instance + a persistent disk (paid). Only enable after D approves:
+#   1. change `plan: free` -> `plan: starter`
+#   2. uncomment the `disk:` block below (mounted at DATA_DIR=/var/data)
+# Note: a service with a disk cannot scale beyond 1 instance and has brief downtime on deploys.
+services:
+  - type: web
+    name: receipt-tracker
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    autoDeploy: false
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SECURE_COOKIES
+        value: "true"
+      - key: EXTRACTOR
+        value: heuristic
+      - key: MAX_UPLOAD_MB
+        value: "10"
+      # Read the client IP from Render's X-Forwarded-For (verify after first deploy; see README).
+      - key: TRUSTED_PROXY_HOPS
+        value: "1"
+      - key: FREE_MONTHLY_RECEIPT_LIMIT
+        value: "15"
+      # Set to the service URL so password-reset links don't depend on the Host header.
+      # - key: PUBLIC_BASE_URL
+      #   value: https://receipt-tracker.onrender.com
+      # Never set DEV_MODE here.
+      # Optional, paid per use. Leave unset unless D approves an AI provider:
+      # - key: OPENAI_API_KEY
+      #   sync: false
+    # disk:                 # PAID — requires plan: starter or higher. Do not enable without D's OK.
+    #   name: receipt-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

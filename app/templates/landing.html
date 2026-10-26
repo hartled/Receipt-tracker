@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Receipts in. Tax-ready summary out.</h1>
+  <p class="lead">For US freelancers: upload a receipt or PDF, we read the vendor, date and amount, suggest a
+    Schedule&nbsp;C-style category, and give you a clean CSV/PDF for your accountant or tax software.</p>
+  <p><a class="btn" href="/signup">Create free account</a> <a class="btn ghost" href="/login">Log in</a></p>
+  {% if request.query_params.get('deleted') %}<div class="flash info">Your account and data were deleted.</div>{% endif %}
+</section>
+<section class="grid3">
+  <div class="card"><h3>1. Upload</h3><p>Photo or PDF. Extraction runs locally by default — nothing is sent to third parties.</p></div>
+  <div class="card"><h3>2. Review</h3><p>Fix anything in seconds. Categories map to Schedule C lines with deductible % hints.</p></div>
+  <div class="card"><h3>3. Export</h3><p>Year-end CSV and PDF summary by category, with estimated deductible totals.</p></div>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+SQLAlchemy==2.1.6
+Jinja2==3.1.6
+python-multipart==0.0.32
+itsdangerous==2.2.0
+bcrypt==5.0.0
+pypdf==6.21.2
+pillow==13.0.0
+pytesseract==0.3.13
+reportlab==5.1.0
+httpx==0.28.1

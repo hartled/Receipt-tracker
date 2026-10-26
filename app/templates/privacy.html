@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Privacy · Receipt Tracker{% endblock %}
+{% block content %}
+<div class="card prose">
+  <h1>Privacy notice (draft)</h1>
+  <p class="muted">MVP draft — to be reviewed before public launch.</p>
+  <h2>What we store</h2>
+  <ul>
+    <li>Your email and a salted bcrypt hash of your password (never the password itself).</li>
+    <li>Receipt files you upload and the details extracted from them (vendor, date, amount, category, notes).</li>
+  </ul>
+  <h2>How it's protected</h2>
+  <ul>
+    <li>Files are stored in a separate folder per account and are only served to the signed-in owner.</li>
+    <li>We do not sell, share or show your data to anyone else. No ads, no trackers.</li>
+    <li>Session cookies are signed and HTTP-only.</li>
+  </ul>
+  <h2>Processing</h2>
+  <p>By default receipts are read on our own server (local OCR). {% if settings.extractor == 'openai' and settings.openai_api_key %}
+    <strong>This deployment uses an AI provider (OpenAI) to read receipt images; images are sent to that provider for extraction.</strong>
+    {% else %}No receipt data is sent to third-party AI services.{% endif %}</p>
+  <h2>Your control</h2>
+  <ul>
+    <li>Edit or delete any receipt at any time.</li>
+    <li>Export everything as CSV/PDF.</li>
+    <li>Delete all your data, or your whole account, from the Account page. Deletion is immediate and permanent
+      (backups, if any, expire on their normal schedule).</li>
+  </ul>
+  <h2>Not tax advice</h2>
+  <p>{{ disclaimer }}</p>
+</div>
+{% endblock %}

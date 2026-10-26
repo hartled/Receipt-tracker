@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Add receipt · Receipt Tracker{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Add receipts</h1>
+  {% if not usage.unlimited %}
+  <p class="{{ 'flash error' if usage.at_limit else 'muted small' }}">
+    {% if usage.at_limit %}You've used all {{ usage.limit }} free receipts for {{ usage.month_label }}. The limit resets on
+      {{ usage.resets_on.strftime('%B') }} 1. <a href="/upgrade">See Pro</a>.
+    {% else %}Free plan: {{ usage.remaining }} of {{ usage.limit }} receipts left this month. <a href="/upgrade">Upgrade</a>{% endif %}
+  </p>
+  {% endif %}
+  <form method="post" action="/receipts/new" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <label class="drop">Photo (JPG/PNG/WEBP) or PDF — up to 20 at once
+      <input type="file" name="files" accept="image/jpeg,image/png,image/webp,application/pdf" multiple capture="environment">
+    </label>
+    <button class="btn full">Upload &amp; extract</button>
+    <p class="muted small">Leave the file empty and press the button to enter a receipt manually.</p>
+  </form>
+  <p class="muted small">Extraction: <strong>{{ extractor }}</strong>{% if extractor == 'heuristic' %}
+    ({{ 'local OCR enabled' if ocr else 'OCR not installed — PDFs with text only; enter image details manually' }}){% endif %}.
+    Always check the result — extraction can be wrong.</p>
+</div>
+{% endblock %}
